@@ -1,7 +1,7 @@
 
 # SEO settings
-title: "天马行空"
-title2: "的景耕" # default: ""
+title: "天马行空的"
+title2: "景耕" # default: ""
 description: "关于技术、生活，略带装B主义色彩的blog"
 keywords: "机器学习, 数据挖掘, C++, Python"
 url: https://luminarytian.github.io/ # site url
