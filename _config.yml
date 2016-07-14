@@ -31,7 +31,7 @@ sass:
 author:
   name     : "景耕"
   job      : "年轻的进程误工人员，目前就职于搜狗"
-  bio      : "“总有人会赢，那为什么就不能是我呢？”"
+  bio      : "“总有人会赢，那为什么就不能是我呢？” -- 科比"
   thumb    : assets/images/author.jpg
   email    : luminary.tian@gmail.com
   url      : http://weibo.com/u/2431436281?is_all=1
