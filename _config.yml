@@ -7,11 +7,10 @@ keywords: "机器学习, 数据挖掘, C++, Python"
 url: https://luminarytian.github.io/ # site url
 #baseurl: "/thinkspace" # apply repo name if use it under gh-pages branch
 # baseurl: null # apply null if repo name is something like username.github.io
-disqus_shortname: "luminarytian"
 
 google_analytics: UA-XXXXX-XX
 repo: http://github.com/luminarytian
-disqus_shortname: "景耕"
+disqus_shortname: "luminarytian"
 twitter_username: ""
 comments: true
 
