@@ -60,7 +60,7 @@ _“年轻人，不要总想着搞个大新闻。。。”_，这句话是前辈
 
 learning to rank貌似会比较小众一些，这几年炒的也不温不火，工业界搞的比较好的是[MSRA](https://www.microsoft.com/en-us/research/project/mslr/)，不过貌似涉及到搜索排序的，都会用这个来搞一搞，算法主要用于对排序公式的参数进行拟合优化(当人工调参很难进行的时候，因为人工一般只能关注一个参数的变化带来的影响)，LTR有三种思路，分别是Pointwise Approach、Pairwise Approach、Listwise Approach，具体的请参见[Learning to rank学习基础](http://kubicode.me/2016/02/15/Machine%20Learning/Learning-To-Rank-Base-Knowledge/#NDCG)，算法也比较多，但最终都还是对特征的权重进行拟合。
 
-说一下RankSVM，因为这个是我在实际工作中使用了的，比较有发言权吧，并且很多公司做learning to rank也是使用的RankSVM。那还是要说回paper[1]，该论文的两大法宝第一个就是上面说过的训练样例组织方式，去掉了大部分Bias数据，第二个就是RankSVM了，论文也证明了使用该算法的效果好(☺)，SVM的数学可以参见我的另一篇[推导]()。
+说一下RankSVM，因为这个是我在实际工作中使用了的，比较有发言权吧，并且很多公司做learning to rank也是使用的RankSVM。那还是要说回paper[1]，该论文的两大法宝第一个就是上面说过的训练样例组织方式，去掉了大部分Bias数据，第二个就是RankSVM了，论文也证明了使用该算法的效果好(☺)，SVM的数学可以参见我的另一篇[推导](https://luminarytian.github.io/2015/SVM-%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC%E5%8F%8A%E5%BA%94%E7%94%A8/)。
 
 RankSVM的思想简单说就是通过用户的点击or非点击样例形成两两的对(所以其属于Pairwise Approach)，正例->负例就是新正例，负例->正例就是新负例，那么就可以通过分类问题来表示排序问题，具体的请看[1]，下面用图说明一下：
 
