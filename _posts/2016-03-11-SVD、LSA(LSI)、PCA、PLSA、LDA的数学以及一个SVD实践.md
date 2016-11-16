@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "SVD、LSA(LSI)、PCA、PLSA、LDA这些带有隐含层模型的数学以及一个SVD的实践"
+title: "SVD、LSA(LSI)、PCA、PLSA、LDA的数学以及一个SVD的实践"
 comments: true
 description: "LDA、SVD、PLSA、LSA(LSI)、PCA"
 keywords: "LDA、SVD、PLSA、LSA(LSI)、PCA"
