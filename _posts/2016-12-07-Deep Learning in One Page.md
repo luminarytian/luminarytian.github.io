@@ -211,11 +211,8 @@ BP这一章本来是想按照[Andrew老师的教程](http://deeplearning.stanfor
 
 对于给定的测试输入<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x">，我们想用假设函数针对每一个类别j估算出概率值<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large p(y=j | x)">。也就是说，我们想估计<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x ">的每一种分类结果出现的概率。因此，我们的假设函数将要输出一个<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large k">维的向量(向量元素的和为1)来表示这 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large k">个估计的概率值。 具体地说，我们的假设函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_{\theta}(x)">形式如下：
 
-<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_\theta(x^{(i)}) =
-\left[p(y^{(i)} = 1 | x^{(i)}; \theta) \\
-p(y^{(i)} = 2 | x^{(i)}; \theta) \\
-\vdots \\
-p(y^{(i)} = k | x^{(i)}; \theta) \right] = \frac{1}{ \sum_{j=1}^{k}e^{\theta_j^Tx^{(i)}}}"><img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large 
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_\th(x^{(i)}) =\left[p(y^{(i)}=1|x^{(i)};\th)\\p(y^{(i)}=2|x^{(i)};\th)\\\vdots\\p(y^{(i)}=k|x^{(i)};\th)\right]=\frac{1}{\sum_{j=1}^{k}e^{\th_j^Tx^{(i)}}}">
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large 
 \left[e^{ \theta_1^T x^{(i)} } \\
 e^{ \theta_2^T x^{(i)} } \\
 \vdots \\
