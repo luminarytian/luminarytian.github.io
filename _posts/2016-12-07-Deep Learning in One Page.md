@@ -7,7 +7,9 @@ keywords: "Deep Learning, CNN, RNN, LSTM, Word2Vector"
 ---
 
 >### **按叙事的手法来说，在工作中使用过一次Word2Vector(为了参加公司的黑马大赛☺)，因为需要在两天之内完成后端相关算法，所以调用了[Mikolov的相关代码](https://code.google.com/archive/p/word2vec/)，然后为了完成PPT(☺)也大致看了一下算法理论。但是还是感觉不求甚解，所以在经历了种种数学公式的折磨之后，有了这篇文章，本文主要参考了[Andrew在Stanford的Deep Learning教程](http://deeplearning.stanford.edu/wiki/index.php/UFLDL%E6%95%99%E7%A8%8B)，诸君可以仔细看看，其网站上还有中文的翻译，非常靠谱，算是自学DL最好的中文教材了。次要参考了一些牛人的见解和思路，也加深了对于算法的理解，相关链接我会放在文章后面的reference中。**
+
 >### **毕竟DL是一门历久弥香的学派，所以涉及的知识点和数学推论非常多，非常多(神经网络激活函数的背景还得需要看看生物)。。。我写此篇文章的目的是为了理解其背景以及数学的物理意义，还有目前热门DL相关算法的思想。这样不仅仅是只知道这样用代码，还知道为什么这么用，以及未来还可以怎么用，达到触类旁通的效果。所以本文会比较长，主要先对Deep Learning的相关历史沿革、知识点进行梳理，然后再对其热门的算法进行详细讲解。至于为什么给这篇文章取了"Deep Learning in One Page"，是因为最近看了[《The Universe in Your Hand》](https://www.amazon.cn/dp/B01BDANJ2G/ref=sr_1_2?ie=UTF8&qid=1487160619&sr=8-2&keywords=universe+in+your+hand)，觉得在一篇教程里把Deep Learning讲清楚也是极好的，所以装装B。**
+
 >### **最后会有一个我自己的Word2Vector实践，思路也比较简单，在我司的某热门产品中，可以得到用户输入的词，将用户所有的词经过Word2Vector转成词向量后，便可以得到很多和用户输入词相关的词，然后将这些词中用户没见过的推荐给用户，从而达到推荐词引导用户点击带流量的目的，从效果上来看还是不错的(起码对于我司黑马大赛的演示应该够了，比如用户曾输入过周杰伦，给他返回方文山☺)。**
 
 ### **一、先来点有意思的**
@@ -26,23 +28,21 @@ keywords: "Deep Learning, CNN, RNN, LSTM, Word2Vector"
 
 再上一个例子，引用自[Deep Learning（深度学习）学习笔记整理系列之（一）](http://blog.csdn.net/zouxy09/article/details/8775360)：
 
-```
-1958 年，DavidHubel 和Torsten Wiesel 在 JohnHopkins University，研究瞳孔区域与大脑皮层神经元的对应关系。他们在猫的后脑头骨上，开了一个3毫米的小洞，向洞里插入电极，测量神经元的活跃程度。
+_1958 年，DavidHubel 和Torsten Wiesel 在 JohnHopkins University，研究瞳孔区域与大脑皮层神经元的对应关系。他们在猫的后脑头骨上，开了一个3毫米的小洞，向洞里插入电极，测量神经元的活跃程度。_
 
-然后，他们在小猫的眼前，展现各种形状、各种亮度的物体。并且，在展现每一件物体时，还改变物体放置的位置和角度。他们期望通过这个办法，让小猫瞳孔感受不同类型、不同强弱的刺激。
+_然后，他们在小猫的眼前，展现各种形状、各种亮度的物体。并且，在展现每一件物体时，还改变物体放置的位置和角度。他们期望通过这个办法，让小猫瞳孔感受不同类型、不同强弱的刺激。_
 
-之所以做这个试验，目的是去证明一个猜测。位于后脑皮层的不同视觉神经元，与瞳孔所受刺激之间，存在某种对应关系。一旦瞳孔受到某一种刺激，后脑皮层的某一部分神经元就会活跃。经历了很多天反复的枯燥的试验，同时牺牲了若干只可怜的小猫，David Hubel 和Torsten Wiesel 发现了一种被称为“方向选择性细胞（Orientation Selective Cell）”的神经元细胞。当瞳孔发现了眼前的物体的边缘，而且这个边缘指向某个方向时，这种神经元细胞就会活跃。
+_之所以做这个试验，目的是去证明一个猜测。位于后脑皮层的不同视觉神经元，与瞳孔所受刺激之间，存在某种对应关系。一旦瞳孔受到某一种刺激，后脑皮层的某一部分神经元就会活跃。经历了很多天反复的枯燥的试验，同时牺牲了若干只可怜的小猫，David Hubel 和Torsten Wiesel 发现了一种被称为“方向选择性细胞（Orientation Selective Cell）”的神经元细胞。当瞳孔发现了眼前的物体的边缘，而且这个边缘指向某个方向时，这种神经元细胞就会活跃。_
 
-这个发现激发了人们对于神经系统的进一步思考。神经-中枢-大脑的工作过程，或许是一个不断迭代、不断抽象的过程。
+_这个发现激发了人们对于神经系统的进一步思考。神经-中枢-大脑的工作过程，或许是一个不断迭代、不断抽象的过程。_
 
-这里的关键词有两个，一个是抽象，一个是迭代。从原始信号，做低级抽象，逐渐向高级抽象迭代。人类的逻辑思维，经常使用高度抽象的概念。
-```
+_这里的关键词有两个，一个是抽象，一个是迭代。从原始信号，做低级抽象，逐渐向高级抽象迭代。人类的逻辑思维，经常使用高度抽象的概念。_
 
 可见在生物学上，起码在视觉方面，生物认识和抽象一个事物的过程确实是经过了神经网络从而得到其意义(或许现在的科学还无法完全解释和证明，但如果有一天人们彻底理解了自己如何理解事物的过程，AI的时代才会真正来临吧)。上面的例子还有一些其他的启发意义，比如抽象的信号只需要激活少数神经元，比如视觉问题的处理可以初步抽象为方向或者边缘，即可以用少量的带有边缘的图片组合成其他图片，这又和下面的一个例子不谋而合，这次是Andrew老师的分享。
 
 ![稀疏编码](https://luminarytian.github.io/images/稀疏编码.jpg)
 
-上图右上侧是提取出来的带有边缘的图片，也叫做图片的正交基，共64个，而所有自然图片中的一小块都可以用这64个正交基组合而成，所以这64个图片可以作为对所有图片建模的神经网络的第一层，也就是特征抽象的第一层，再由这些第一层的特征组合成第二层的特征，在下面的图中，从下往上第二层明显可以看出是对第三层图片实体的一部分进行抽象，而这些第二层抽象可以只由第一层特征组合生成。而以第二层为基础特征的时候，则可以明确的识别第三层图片中所表达的实体(意义)。那这三层就可以看作是一个简单的人工神经网络的例子了，**即人工神经网络模型模拟了自然界生物如何识别事物的过程，并将其数学化**。也许正因为其模拟了生物的认知过程，所以效果超过了目前所有的数学模型，记得有一句话是_“人类一直在探索自身认识世界的过程。”_
+上图右上侧是提取出来的带有边缘的图片，也叫做图片的正交基，共64个，而所有自然图片中的一小块都可以用这64个正交基组合而成，所以这64个图片可以作为对所有图片建模的神经网络的第一层，也就是特征抽象的第一层，再由这些第一层的特征组合成第二层的特征，在下面的图中，从下往上第二层明显可以看出是对第三层图片实体的一部分进行抽象，而这些第二层抽象可以只由第一层特征组合生成。而以第二层为基础特征的时候，则可以明确的识别第三层图片中所表达的实体(意义)。那这三层就可以看作是一个简单的人工神经网络的例子了，**即人工神经网络模型模拟了自然界生物如何识别事物的过程，并将其数学化**。也许正因为其模拟了生物的认知过程，所以效果超过了目前所有的数学模型，记得有一句话是**“人类一直在探索自身认识世界的过程。”**
 
 ![简单神经网络建模](https://luminarytian.github.io/images/简单神经网络建模.jpg)
 
@@ -58,13 +58,31 @@ keywords: "Deep Learning, CNN, RNN, LSTM, Word2Vector"
 
 ![神经元](https://luminarytian.github.io/images/神经元.png)
 
-上图是构成神经网络的最小单元：**神经元**，其完成的工作即是对输入信号进行抽象并输出。以上图的图示来说，其拥有3个输入信号<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_1,x_2,x_3">以及一个偏置项(也叫截距)<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large %2b1">，则其输入与输出关系表示为：<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_{w,b}(x) = f(W^Tx) = f(\sum_{i=1}^{3}{W_ix_i %2b b})">。其中函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">称为**“激活函数”**。激活函数可以有很多，但依据Andrew老师的教程，使用的是sigmod函数：<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f(z) = sigmod(z) = \frac {1}{1 %2b \exp(-z)}">，则该神经元完成的功能其实是一个逻辑回归，[逻辑回归相关可以参考我的另一篇文章](https://luminarytian.github.io/2016/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%92%8Clearning-to-rank%E7%AE%97%E6%B3%95%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E5%AE%9E%E8%B7%B5/)。当然，激活函数常用的还有双曲正切函数(tanh)，表示为：<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f(z) = tanh(z) = \frac {e^z - e^{-z}}{e^z %2b e^{-z}}">，其与sigmod的区别为sigmod值域为[0,1]，tanh值域为[-1,1]。
+上图是构成神经网络的最小单元：**神经元**，其完成的工作即是对输入信号进行抽象并输出。以上图的图示来说，其拥有3个输入信号<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_1,x_2,x_3">以及一个偏置项(也叫截距)<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large %2b1">，则其输入与输出关系表示为：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_{w,b}(x) = f(W^Tx) = f(\sum_{i=1}^{3}{W_ix_i %2b b})">。
+
+其中函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">称为**“激活函数”**。激活函数可以有很多，但依据Andrew老师的教程，使用的是sigmod函数：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f(z) = sigmod(z) = \frac {1}{1 %2b \exp(-z)}">
+
+则该神经元完成的功能其实是一个逻辑回归，[逻辑回归相关可以参考我的另一篇文章](https://luminarytian.github.io/2016/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%92%8Clearning-to-rank%E7%AE%97%E6%B3%95%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E5%AE%9E%E8%B7%B5/)。当然，激活函数常用的还有双曲正切函数(tanh)，表示为：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f(z) = tanh(z) = \frac {e^z - e^{-z}}{e^z %2b e^{-z}}">
+
+其与sigmod的区别为sigmod值域为[0,1]，tanh值域为[-1,1]。
 
 那由多个神经元组成的网络模型即是神经网络了，以下公式及推论搬运自[Andrew老师的课程](http://deeplearning.stanford.edu/wiki/index.php/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C)，如下图所示：
 
 ![神经网络](https://luminarytian.github.io/images/神经网络.png) 
 
-我们用<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large {n}_l">来表示网络的层数，本例中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large n_l=3">，我们将第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">层记为<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large L_l">，于是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large L_1">是输入层，输出层是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large L_{n_l}">。本例神经网络有参数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large (W,b) = (W^{(1)}, b^{(1)}, W^{(2)}, b^{(2)})">，其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W^{(l)}_{ij}">(下面的式子中用到)是第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">层第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large j">单元与第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l %2b 1">层第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large i">单元之间的联接参数(其实就是连接线上的权重，注意标号顺序)，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b^{(l)}_i">是第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l %2b 1">层第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large i">单元的偏置项。因此在本例中，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W^{(1)} \in \Re^{3\times 3}">，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W^{(2)} \in \Re^{1\times 3}">。注意，没有其他单元连向偏置单元(即偏置单元没有输入)，因为它们总是输出<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large +1">。同时，我们用<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large s_l">表示第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">层的节点数(偏置单元不计在内)。
+我们用<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large {n}_l">来表示网络的层数，本例中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large n_l=3">，我们将第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">层记为<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large L_l">，于是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large L_1">是输入层，输出层是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large L_{n_l}">。本例神经网络有参数：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large (W,b) = (W^{(1)}, b^{(1)}, W^{(2)}, b^{(2)})">
+
+其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W^{(l)}_{ij}">(下面的式子中用到)是第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">层第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large j">单元与第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l %2b 1">层第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large i">单元之间的联接参数(其实就是连接线上的权重，注意标号顺序)，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b^{(l)}_i">是第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l %2b 1">层第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large i">单元的偏置项。因此在本例中，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W^{(1)} \in \Re^{3\times 3}">，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W^{(2)} \in \Re^{1\times 3}">。
+
+注意，没有其他单元连向偏置单元(即偏置单元没有输入)，因为它们总是输出<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large +1">。同时，我们用<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large s_l">表示第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">层的节点数(偏置单元不计在内)。
 
 我们用<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a^{(l)}_i">表示第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">层第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large i">单元的激活值(activition)。当<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l=1">时，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a^{(1)}_i = x_i">，也就是第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large i">个输入值(输入值的第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large i">个特征)。对于给定参数集合<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W,b">，我们的神经网络就可以按照函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_{W,b}(x)">来计算输出结果。本例神经网络的计算步骤如下：
 
@@ -78,7 +96,11 @@ keywords: "Deep Learning, CNN, RNN, LSTM, Word2Vector"
 
 我们用<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z^{(l)}_i">表示第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">层第<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large i">单元输入加权和(包括偏置单元)，比如<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z_i^{(2)} = \sum_{j=1}^n W^{(1)}_{ij} x_j %2b b^{(1)}_i">，则<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a^{(l)}_i = f(z^{(l)}_i)">。
 
-这样我们就可以得到一种更简洁的表示法。这里我们将激活函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">扩展为用向量(分量的形式)来表示，即<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f([z_1, z_2, z_3]) = [f(z_1), f(z_2), f(z_3)]">，那么，上面的等式可以更简洁地表示为：
+这样我们就可以得到一种更简洁的表示法。这里我们将激活函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">扩展为用向量(分量的形式)来表示，即：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f([z_1, z_2, z_3]) = [f(z_1), f(z_2), f(z_3)]">
+
+那么，上面的等式可以更简洁地表示为：
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z^{(2)} = W^{(1)} x %2b b^{(1)}">
 
@@ -102,9 +124,15 @@ keywords: "Deep Learning, CNN, RNN, LSTM, Word2Vector"
 
 BP这一章本来是想按照[Andrew老师的教程](http://deeplearning.stanford.edu/wiki/index.php/%E5%8F%8D%E5%90%91%E4%BC%A0%E5%AF%BC%E7%AE%97%E6%B3%95)展开的，但发现其讲义实在是太精简，公式都不带推导的。。。中文的译者给加上了部分推导，但理解起来还是比较费劲，主要难点在代价函数关于每一层参数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{i,j}">的偏导的求解过程，以及其中残差(error term)的定义，中间涉及的一些知识点[链式法则](https://zh.wikipedia.org/wiki/%E9%93%BE%E5%BC%8F%E6%B3%95%E5%88%99)和[Delta规则](https://en.wikipedia.org/wiki/Delta_rule)文中都没有提及，废话不多说，容我从头梳理一遍。
 
-先上代价函数：<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J(W,b; x,y) = \frac{1}{2} \left\| h_{W,b}(x) - y \right\|^2">，符号意义同上一节，其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y">代表样例的标签，即某样例<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large (x,y)">是对应神经网络的输入和标签，而<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_{W,b}(x)">是输入经过神经网络后的输出，则代价函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J">**求的是样例输入经过神经网络后的输出与样例标签的差异**。
+先上代价函数：
 
-那按照MLE的套路，**只要在训练样例下最小化代价函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J">就可以了，即不断的调整代价函数中的参数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{i,j}">和<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b_i">，使代价函数最小**。调整的方式是使用这两个参数的梯度<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial W_{ij}^{(l)}} J(W,b; x, y)">和<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large  
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J(W,b; x,y) = \frac{1}{2} \left\| h_{W,b}(x) - y \right\|^2">
+
+符号意义同上一节，其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y">代表样例的标签，即某样例<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large (x,y)">是对应神经网络的输入和标签，而<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_{W,b}(x)">是输入经过神经网络后的输出，则代价函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J">**求的是样例输入经过神经网络后的输出与样例标签的差异**。
+
+那按照MLE的套路，**只要在训练样例下最小化代价函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J">就可以了，即不断的调整代价函数中的参数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{i,j}">和<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b_i">，使代价函数最小**。
+
+调整的方式是使用这两个参数的梯度<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial W_{ij}^{(l)}} J(W,b; x, y)">和<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large  
 \frac{\partial}{\partial b_{i}^{(l)}} J(W,b; x, y)">来迭代，直到满足代价函数的可接受最小值(阈值)或者达到最大迭代次数，梯度的求解是一个求偏导的过程(求偏导的物理意义是函数关于变量变化而变化的快慢)。如果这一段你有点懵逼，建议你先看看[MLE](https://zh.wikipedia.org/wiki/%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1)和[GD](https://zh.wikipedia.org/wiki/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95)，好了，剩下的就是两个参数在神经网络中求梯度的方法了，该方法就是**反向传播算法**。
 
 先求<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{i,j}">的梯度，Andrew的讲义中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial W_{ij}^{(l)}} J(W,b; x, y)">是使用两项相乘的方式，其中一项为残差。公式是准确的，并且先求解了残差，这就是一个先有鸡还是先有蛋的问题了，我个人认为残差确实有助于理解算法，也使求解更加美观，但残差应该是求解<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial W_{ij}^{(l)}} J(W,b; x, y)">的产物，其中使用了链式法则，故为两项相乘的方式，下面直接上<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial W_{ij}^{(l)}} J(W,b; x, y)">的推导过程：
@@ -113,27 +141,45 @@ BP这一章本来是想按照[Andrew老师的教程](http://deeplearning.stanfor
 
 上式使用了复合函数求导的链式法则，相关符号遵循上一节的神经网络，现对后面三项分别求解：
 
-<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial f(z^{l %2b 1})}{\partial z^{l %2b 1}} = f'(z^{(l %2b 1)}) = f(z^{l %2b 1}) (1-f(z^{l %2b 1}))">，其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">是激活函数，本公式使用的sigmod，在Andrew的讲义中，没有按sigmod展开，只计算到等式前两项。
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial f(z^{l %2b 1})}{\partial z^{l %2b 1}} = f'(z^{(l %2b 1)}) = f(z^{l %2b 1}) (1-f(z^{l %2b 1}))">
+
+其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">是激活函数，本公式使用的sigmod，在Andrew的讲义中，没有按sigmod展开，只计算到等式前两项。
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial z^{l %2b 1}}{\partial W_{ij}^{(l)}} = \frac {\partial (\sum_{j=1}^nW_{ij}^{(l)}a_j^{(l)} %2b b_i^{(l)})}{\partial W_{ij}^{(l)}} = a_j^{(l)">，这项没啥可说的，套用了上一节的公式，并且加入了下标，其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b_i^{(l)}">与所求偏导不相关，所以去掉了。
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial J}{\partial f(z^{l %2b 1})}">这一项要分两种情况进行讨论：
 
-第一种是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z^{l %2b 1}">是网络最后一层，也就是输出层，即<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f(z^{l %2b 1}) = a^{(nl)}">，则<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial J}{\partial f(z^{l %2b 1})} = \frac {\partial (\frac{1}{2} |y-a^{(nl)}|^2)}{\partial a^{(nl)}} = -({y-a^{(nl)})">
+第一种是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z^{l %2b 1}">是网络最后一层，也就是输出层，即<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f(z^{l %2b 1}) = a^{(nl)}">
 
-第二种是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z^{l %2b 1}">是网络的中间层，即隐藏层，则也可利用链式法则<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial J}{\partial f(z^{l %2b 1})} = \frac {\partial J}{\partial z^{nl}} \frac {\partial z^{nl}}{\partial f(z^{nl-1})}\....\frac {\partial z^{l %2b 2}}{\partial f(z^{l %2b 1})}">从后往前求得，这也是该算法叫反向传播的原因，而其中的中间项之一可以解为<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial z^{l %2b 2}}{\partial f(z^{l %2b 1})} = \frac {\partial (W^{(l %2b 1)}f(z^{l %2b 1}) %2b b^{(l %2b 1)})}{\partial f(z^{l %2b 1})} = W^{(l %2b 1)">。这里就引入一下**残差<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \delta^{(l)}_i">**了，上一个链式法则的式子如果真要展开也是能展开的(只是比较难看)，然而大牛们为了优雅(☺)引入了单层的能量损失来使公式更漂亮，不过确实对理解算法有帮助，并且残差也有其物理意义。残差是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial z^{l}_i}J(W,b;x,y) =  \delta^{(l)}_i = ( \sum_{j=1}^{s_{l %2b 1}} W^{(l)}_{ji} \delta^{(l %2b 1)}_j ) f'(z^{(l)}_i)">，物理意义即代价函数关于关于某一层<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">中激活函数的输入<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z^l">的偏导，所以隐藏层<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l %2b 1">的偏导可写为<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial J}{\partial f(z^{l %2b 1})} = \sum_{j=1}^{s_{l %2b 2}} W^{(l %2b 1)}_{ji} \delta^{(l %2b 2)}_j">。
+则<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial J}{\partial f(z^{l %2b 1})} = \frac {\partial (\frac{1}{2} |y-a^{(nl)}|^2)}{\partial a^{(nl)}} = -({y-a^{(nl)})">
 
-将上面推导过的三项乘起来，并引入残差化简，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial W_{ij}^{(l)}} J(W,b; x, y) = \delta^{(l %2b 1)} (a^{(l)})^T">，公式确实很漂亮。顺便一提该公式中残差是按照这层的输入<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large (a^{(l)})">加权到这层的权重<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{ij}^{(l)}">中，即在网络训练的过程中，残差会按输入的比例调整参数的大小，这也是一种反向传播的过程。
+第二种是<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z^{l %2b 1}">是网络的中间层，即隐藏层，则也可利用链式法则
 
-剩下的就很好解了，使用梯度下降迭代求解，我就不多说了，再提一个代价函数关于截距<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b">的偏导，为<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial b_{i}^{(l)}} J(W,b; x, y) = \delta_i^{(l %2b 1)}">，比较简单，请各位自行推导。
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial J}{\partial f(z^{l %2b 1})} = \frac {\partial J}{\partial z^{nl}} \frac {\partial z^{nl}}{\partial f(z^{nl-1})}\....\frac {\partial z^{l %2b 2}}{\partial f(z^{l %2b 1})}">
+
+从后往前求得，这也是该算法叫反向传播的原因，而其中的中间项之一可以解为：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial z^{l %2b 2}}{\partial f(z^{l %2b 1})} = \frac {\partial (W^{(l %2b 1)}f(z^{l %2b 1}) %2b b^{(l %2b 1)})}{\partial f(z^{l %2b 1})} = W^{(l %2b 1)">
+
+这里就引入一下**残差<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \delta^{(l)}_i">**了，上一个链式法则的式子如果真要展开也是能展开的(只是比较难看)，然而大牛们为了优雅(☺)引入了单层的能量损失来使公式更漂亮，不过确实对理解算法有帮助，并且残差也有其物理意义。残差是：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial z^{l}_i}J(W,b;x,y) =  \delta^{(l)}_i = ( \sum_{j=1}^{s_{l %2b 1}} W^{(l)}_{ji} \delta^{(l %2b 1)}_j ) f'(z^{(l)}_i)">
+
+物理意义即代价函数关于关于某一层<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l">中激活函数的输入<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large z^l">的偏导，所以隐藏层<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large l %2b 1">的偏导可写为：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial J}{\partial f(z^{l %2b 1})} = \sum_{j=1}^{s_{l %2b 2}} W^{(l %2b 1)}_{ji} \delta^{(l %2b 2)}_j">
+
+将上面推导过的三项乘起来，并引入残差化简：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial W_{ij}^{(l)}} J(W,b; x, y) = \delta^{(l %2b 1)} (a^{(l)})^T">
+
+公式确实很漂亮。顺便一提该公式中残差是按照这层的输入<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large (a^{(l)})">加权到这层的权重<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{ij}^{(l)}">中，即在网络训练的过程中，残差会按输入的比例调整参数的大小，这也是一种反向传播的过程。
+
+剩下的就很好解了，使用梯度下降迭代求解，我就不多说了，再提一个代价函数关于截距<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b">的偏导，为：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial b_{i}^{(l)}} J(W,b; x, y) = \delta_i^{(l %2b 1)}">，比较简单，请各位自行推导。
 
 以上就是BP的推导了，简单的说，**反向传播得到了整体代价函数关于神经网络中每一层参数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{ij}^{(l)}">和<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b_{i}^{(l)}">的梯度**，从而可以用梯度下降法对其进行MLE求解。最后Delta规则提一下，可以理解其为单层网络中的梯度推导过程。
-
-[reference1](http://www.hankcs.com/ml/back-propagation-neural-network.html)
-
-[reference2](http://www.cnblogs.com/daniel-D/archive/2013/06/03/3116278.html)
-
-[reference3](https://zh.wikipedia.org/wiki/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95#.E6.B1.82.E8.AF.AF.E5.B7.AE.E7.9A.84.E5.AF.BC.E6.95.B0)
 
 ---
 
@@ -141,7 +187,11 @@ BP这一章本来是想按照[Andrew老师的教程](http://deeplearning.stanfor
 
 先说一下自动编码器(AutoEncoder)，具体的内容可以[参见](http://deeplearning.stanford.edu/wiki/index.php/%E8%87%AA%E7%BC%96%E7%A0%81%E7%AE%97%E6%B3%95%E4%B8%8E%E7%A8%80%E7%96%8F%E6%80%A7)。在上一节讲到的BP算法，其实是一个很老的算法了，在上世纪80年代就已经很成熟，但其并没有带来神经网络的成功，原因是通过BP计算的网络中每一层的参数不好解释，即不能知道网络中某一层所抽象出来的意义是什么。那么自动编码器可以做到这一点，简单的自动编码器规定网络的输入经过隐藏层之后，所得到的输出依然等于输入，看上去这个定义挺二的，比如使用一个恒等式就完成了，但当对自动编码进行一些约束之后，比如隐藏层节点数远小于输入层节点数(这样会迫使隐藏层学习关于输入信息的更加正交的表达，比如通过10个隐藏层节点的组合，表达出输入层100个节点的信息)，即可以得到对输入信号的正交基(信号主要方向)的抽象，如果你熟悉PCA，这一块应该很好理解，也可以看看我的另一篇[SVD、LSA(LSI)、PCA、PLSA、LDA的数学以及一个SVD的实践](https://luminarytian.github.io/2016/SVD-LSA(LSI)-PCA-PLSA-LDA%E7%9A%84%E6%95%B0%E5%AD%A6%E4%BB%A5%E5%8F%8A%E4%B8%80%E4%B8%AASVD%E5%AE%9E%E8%B7%B5/)。
 
-然后就是稀疏自编码器(SparseAutoEncoder),稀疏是指隐藏层中每个节点的神经元的激活值都趋近于0，为啥要加一个稀疏性呢，各位可以想象上一章提到的生物学中猫的视觉实验，在猫的眼前呈现的不同方向的不同物体，只激活了猫大脑中的部分神经元，即生物中神经网络的激活是有稀疏特性的。则稀疏自编码器的代价函数为：<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J(W, h) = ||Wh - y||_2^2 %2b \lambda ||h||_1">，其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h">是隐藏层的激活值<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W">是该层中关于激活值的权重，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y">是输出层，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \lambda">是惩罚项的系数，其中右侧的惩罚项常常使用一阶范数(L1)或者二阶范数(L2)，本例中使用的是一阶范数。则求解上述公式得到的是**最小化网络对输入信号的抽象错误值与隐藏层神经元惩罚项的和**，其实是在学习对输入信号的最优表达。
+然后就是稀疏自编码器(SparseAutoEncoder),稀疏是指隐藏层中每个节点的神经元的激活值都趋近于0，为啥要加一个稀疏性呢，各位可以想象上一章提到的生物学中猫的视觉实验，在猫的眼前呈现的不同方向的不同物体，只激活了猫大脑中的部分神经元，即生物中神经网络的激活是有稀疏特性的。则稀疏自编码器的代价函数为：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J(W, h) = ||Wh - y||_2^2 %2b \lambda ||h||_1">
+
+其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h">是隐藏层的激活值<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W">是该层中关于激活值的权重，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y">是输出层，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \lambda">是惩罚项的系数，其中右侧的惩罚项常常使用一阶范数(L1)或者二阶范数(L2)，本例中使用的是一阶范数。则求解上述公式得到的是**最小化网络对输入信号的抽象错误值与隐藏层神经元惩罚项的和**，其实是在学习对输入信号的最优表达。
 
 最后可以看看[Andrew老师的一个例子](http://deeplearning.stanford.edu/wiki/index.php/%E5%8F%AF%E8%A7%86%E5%8C%96%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8%E8%AE%AD%E7%BB%83%E7%BB%93%E6%9E%9C)，其使用稀疏自编码器在图像数据上训练了100个隐藏神经元的结果：
 
@@ -287,7 +337,9 @@ e^{ (\theta_2-\theta_1)^T x }
 
 假设你已经从一个 5x5 的图像中学习到了它的一个 3x3 的样本所具有的特征。假设这是由有 1 个隐含单元的自编码完成的。为了得到卷积特征，需要对 5x5 的图像的每个 3x3 的小块图像区域都进行卷积运算。也就是说，抽取 3x3 的小块区域，并且从起始坐标开始依次标记为（1，1），（1，2），...，一直到（3，3），然后对抽取的区域逐个运行训练过的稀疏自编码来得到特征的激活值。在这个例子里，显然可以得到 1 个集合，每个集合含有 (5-3+1)x(5-3+1) 个卷积特征。
 
-通用表达为：假设给定了<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large r \times c ">的大尺寸图像，将其定义为<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_{large}">。首先通过从大尺寸图像中抽取的<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a \times b ">的小尺寸图像样本<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_{small} ">训练稀疏自编码，计算<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f = \sig(W^{(1)}x_{small} %2b b^{(1)})">（σ 是一个 sigmoid 型函数）得到了 k 个特征， 其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W^{(1)} ">和<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b^{(1)} ">是可视层单元和隐含单元之间的权重和偏差值。对于每一个<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a \times b ">大小的小图像<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_s">，计算出对应的值<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f_s = \sig(W^{(1)}x_s %2b b^{(1)})">，对这些<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f_{convolved} ">值做卷积，就可以得到<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large k \times (r - a %2b 1) \times (c - b %2b 1) ">个卷积后的特征的矩阵。
+通用表达为：假设给定了<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large r \times c ">的大尺寸图像，将其定义为<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_{large}">。首先通过从大尺寸图像中抽取的<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a \times b ">的小尺寸图像样本<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_{small} ">训练稀疏自编码，计算<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f = \sig(W^{(1)}x_{small} %2b b^{(1)})">（σ 是一个 sigmoid 型函数）得到了 k 个特征， 其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W^{(1)} ">和<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b^{(1)} ">是可视层单元和隐含单元之间的权重和偏差值。
+
+对于每一个<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a \times b ">大小的小图像<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_s">，计算出对应的值<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f_s = \sig(W^{(1)}x_s %2b b^{(1)})">，对这些<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f_{convolved} ">值做卷积，就可以得到<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large k \times (r - a %2b 1) \times (c - b %2b 1) ">个卷积后的特征的矩阵。
 
 再回到上面的例子，如图：
 
@@ -325,7 +377,7 @@ e^{ (\theta_2-\theta_1)^T x }
 
 输入为32\*32的图像，C1是第一个卷积层，其使用6个5\*5的局部感受野得到的特征神经元对输入求卷积矩阵并作为C1层的节点，故C1层的大小为6\*(32-5+1)\*(32-5+1) = 6\*28\*28。S2层是一个池化层，S2对C1中的2\*2大小进行池化，故S2层的大小为6\*14\*14，后面的层类似，值得一提的是，S2到C3使用的是16个6\*5\*5的局部感受野对S2求卷积矩阵，网络最后的几层使用了全联通网络。
 
----
+<div class="divider"></div>
 
 **2、递归神经网络：**
 
@@ -339,9 +391,13 @@ e^{ (\theta_2-\theta_1)^T x }
 
 ![RNN分解](https://luminarytian.github.io/images/RNN分解.jpg)
 
-在某时刻<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_t">，隐层神经元<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large S_t">的输入为：<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a_h^t = \sum_i{w_{ih}x_i^t} %2b \sum_{h'}{w_{h'h}b_{h'}^{t-1}}">
+在某时刻<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_t">，隐层神经元<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large S_t">的输入为：
 
-输出为：<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b_h^t = f(a_h^t)">
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a_h^t = \sum_i{w_{ih}x_i^t} %2b \sum_{h'}{w_{h'h}b_{h'}^{t-1}}">
+
+输出为：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b_h^t = f(a_h^t)">
 
 其中，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large w_{ih}">为输入层到隐藏层需学习的权重参数，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_i^t">为输入层某个神经元的输入值，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large w_{h'h}">为上一个时刻隐藏层的输出到当前时刻隐藏层需学习的权重参数，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b_{h'}^{t-1}">为上一个时刻隐藏层某个神经元的输出，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">是非线性激活函数，通常使用tanh。
 
@@ -349,7 +405,9 @@ e^{ (\theta_2-\theta_1)^T x }
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large a_k^t = \sum_h{w_{hk}b_h^t}"> 
 
-输出为：<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y_k^t = \frac {e^{a_k^t}}{\sum_j{e^{a_j^t}}}">
+输出为：
+
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y_k^t = \frac {e^{a_k^t}}{\sum_j{e^{a_j^t}}}">
 
 其中，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large w_{hk}">为隐藏层到输出层需学习的权重参数，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y_k^t">是softmax分类。
 
@@ -417,7 +475,7 @@ _LSTM结构_
 
 至此LSTM的前向传播过程就完成了，**反向传播过程我就不推了。。。**因为实在是太多，各位感兴趣可以去参考[LSTM网络（Long Short-Term Memory ）](http://www.cnblogs.com/ooon/p/5594438.html)，或者[LSTM创始论文](http://web.eecs.utk.edu/~itamar/courses/ECE-692/Bobby_paper1.pdf)，细节会比较多一些，**思想还是在反向传播过程中，残差(梯度)在记忆单元中的传递会乘上一个接近于1的导数值，故可以用很长时刻前的训练结果作用于本次训练，并且规避了梯度爆炸和梯度消失问题**。
 
----
+<div class="divider"></div>
 
 **3、Word2Vec：**
 
@@ -486,7 +544,7 @@ Word2Vec主要的推导还请参考[Hierarchical Softmax](http://blog.csdn.net/i
 
 * 19: https://github.com/kjw0612/awesome-rnn
 
-* 20: http://www.52nlp.cn/%E4%B8%AD%E8%8B%B1%E6%96%87%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91%E8%AF%AD%E6%96%99%E4%B8%8A%E7%9A%84word2vec%E5%AE%9E%E9%AA%8C
+* 20: http://www.52nlp.cn/中英文维基百科语料上的word2vec实验
 
 * 21: http://licstar.net/archives/328
 
@@ -495,3 +553,7 @@ Word2Vec主要的推导还请参考[Hierarchical Softmax](http://blog.csdn.net/i
 * 23: http://blog.csdn.net/itplus/article/details/37969519
 
 * 24: http://www.hankcs.com/nlp/word2vec.html
+
+* 25： http://www.cnblogs.com/daniel-D/archive/2013/06/03/3116278.html
+
+* 26： https://zh.wikipedia.org/wiki/反向传播算法#.E6.B1.82.E8.AF.AF.E5.B7.AE.E7.9A.84.E5.AF.BC.E6.95.B0
