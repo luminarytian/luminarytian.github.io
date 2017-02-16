@@ -8,7 +8,7 @@ keywords: "Deep Learning, CNN, RNN, LSTM, Word2Vector"
 
 >### **按叙事的手法来说，在工作中使用过一次Word2Vector(为了参加公司的黑马大赛☺)，因为需要在两天之内完成后端相关算法，所以调用了[Mikolov的相关代码](https://code.google.com/archive/p/word2vec/)，然后为了完成PPT(☺)也大致看了一下算法理论。但是还是感觉不求甚解，所以在经历了种种数学公式的折磨之后，有了这篇文章，本文主要参考了[Andrew在Stanford的Deep Learning教程](http://deeplearning.stanford.edu/wiki/index.php/UFLDL%E6%95%99%E7%A8%8B)，诸君可以仔细看看，其网站上还有中文的翻译，非常靠谱，算是自学DL最好的中文教材了。次要参考了一些牛人的见解和思路，也加深了对于算法的理解，相关链接我会放在文章后面的reference中。**
 
->### **毕竟DL是一门历久弥香的学派，所以涉及的知识点和数学推论非常多，非常多(神经网络激活函数的背景还得需要看看生物)。。。我写此篇文章的目的是为了理解其背景以及数学的物理意义，还有目前热门DL相关算法的思想。这样不仅仅是只知道这样用代码，还知道为什么这么用，以及未来还可以怎么用，达到触类旁通的效果。所以本文会比较长，主要先对Deep Learning的相关历史沿革、知识点进行梳理，然后再对其热门的算法进行详细讲解。至于为什么给这篇文章取了"Deep Learning in One Page"，是因为最近看了[《The Universe in Your Hand》](https://www.amazon.cn/dp/B01BDANJ2G/ref=sr_1_2?ie=UTF8&qid=1487160619&sr=8-2&keywords=universe+in+your+hand)，觉得在一篇教程里把Deep Learning讲清楚也是极好的，所以装装B。**
+>### **毕竟DL是一门历久弥香的学派，所以涉及的知识点和数学推论非常多，非常多(神经网络激活函数的背景还得需要看看生物)。。。我写此篇文章的目的是为了理解其背景以及数学的物理意义，还有目前热门DL相关算法的思想。这样不仅仅是只知道这样用代码，还知道为什么这么用，以及未来还可以怎么用，达到触类旁通的效果。所以本文会比较长，主要先对Deep Learning的相关历史沿革、知识点进行梳理，然后再对其热门的算法进行详细讲解。至于为什么给这篇文章取了"Deep Learning in One Page"，是因为最近看了[《The Universe in Your Hand》](https://www.amazon.cn/dp/B01BDANJ2G/ref=sr_1_2?ie=UTF8&qid=1487160619&sr=8-2&keywords=universe+in+your+hand)，觉得在一篇教程里把Deep Learning讲清楚也是极好的。**
 
 >### **最后会有一个我自己的Word2Vector实践，思路也比较简单，在我司的某热门产品中，可以得到用户输入的词，将用户所有的词经过Word2Vector转成词向量后，便可以得到很多和用户输入词相关的词，然后将这些词中用户没见过的推荐给用户，从而达到推荐词引导用户点击带流量的目的，从效果上来看还是不错的(起码对于我司黑马大赛的演示应该够了，比如用户曾输入过周杰伦，给他返回方文山☺)。**
 
