@@ -60,13 +60,13 @@ _这里的关键词有两个，一个是抽象，一个是迭代。从原始信�
 
 上图是构成神经网络的最小单元：**神经元**，其完成的工作即是对输入信号进行抽象并输出。以上图的图示来说，其拥有3个输入信号<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large x_1,x_2,x_3">以及一个偏置项(也叫截距)<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large %2b1">，则其输入与输出关系表示为：
 
-<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_{w,b}(x) = f(W^Tx) = f(\sum_{i=1}^{3}{W_ix_i %2b b})">。
+<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h_{w,b}(x) = f(W^Tx) = f(\sum_{i=1}^{3}{W_ix_i %2b b})">
 
 其中函数<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">称为**“激活函数”**。激活函数可以有很多，但依据Andrew老师的教程，使用的是sigmod函数：
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f(z) = sigmod(z) = \frac {1}{1 %2b \exp(-z)}">
 
-则该神经元完成的功能其实是一个逻辑回归，[逻辑回归相关可以参考我的另一篇文章](https://luminarytian.github.io/2016/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%92%8Clearning-to-rank%E7%AE%97%E6%B3%95%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E5%AE%9E%E8%B7%B5/)。当然，激活函数常用的还有双曲正切函数(tanh)，表示为：
+则该神经元完成的功能其实是一个逻辑回归进行分类的过程，[逻辑回归相关可以参考我的另一篇文章](https://luminarytian.github.io/2016/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%92%8Clearning-to-rank%E7%AE%97%E6%B3%95%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E5%AE%9E%E8%B7%B5/)。当然，激活函数常用的还有双曲正切函数(tanh)，表示为：
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f(z) = tanh(z) = \frac {e^z - e^{-z}}{e^z %2b e^{-z}}">
 
@@ -157,7 +157,7 @@ BP这一章本来是想按照[Andrew老师的教程](http://deeplearning.stanfor
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial J}{\partial f(z^{l %2b 1})} = \frac {\partial J}{\partial z^{nl}} \frac {\partial z^{nl}}{\partial f(z^{nl-1})}\....\frac {\partial z^{l %2b 2}}{\partial f(z^{l %2b 1})}">
 
-从后往前求得，这也是该算法叫反向传播的原因，而其中的中间项之一可以解为：
+**从后往前求得，这也是该算法叫反向传播的原因**，而其中的中间项之一可以解为：
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac {\partial z^{l %2b 2}}{\partial f(z^{l %2b 1})} = \frac {\partial (W^{(l %2b 1)}f(z^{l %2b 1}) %2b b^{(l %2b 1)})}{\partial f(z^{l %2b 1})} = W^{(l %2b 1)">
 
@@ -173,7 +173,7 @@ BP这一章本来是想按照[Andrew老师的教程](http://deeplearning.stanfor
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \frac{\partial}{\partial W_{ij}^{(l)}} J(W,b; x, y) = \delta^{(l %2b 1)} (a^{(l)})^T">
 
-公式确实很漂亮。顺便一提该公式中残差是按照这层的输入<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large (a^{(l)})">加权到这层的权重<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{ij}^{(l)}">中，即在网络训练的过程中，残差会按输入的比例调整参数的大小，这也是一种反向传播的过程。
+公式确实很漂亮。顺便一提该公式中残差是按照这层的输入<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large (a^{(l)})">加权到这层的权重<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W_{ij}^{(l)}">中，**即在网络训练的过程中，残差会按输入的比例调整参数的大小，这也是一种反向传播的过程**。
 
 剩下的就很好解了，使用梯度下降迭代求解，我就不多说了，再提一个代价函数关于截距<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large b">的偏导，为：
 
@@ -185,13 +185,15 @@ BP这一章本来是想按照[Andrew老师的教程](http://deeplearning.stanfor
 
 **3、稀疏自编码：**
 
-先说一下自动编码器(AutoEncoder)，具体的内容可以[参见](http://deeplearning.stanford.edu/wiki/index.php/%E8%87%AA%E7%BC%96%E7%A0%81%E7%AE%97%E6%B3%95%E4%B8%8E%E7%A8%80%E7%96%8F%E6%80%A7)。在上一节讲到的BP算法，其实是一个很老的算法了，在上世纪80年代就已经很成熟，但其并没有带来神经网络的成功，原因是通过BP计算的网络中每一层的参数不好解释，即不能知道网络中某一层所抽象出来的意义是什么。那么自动编码器可以做到这一点，简单的自动编码器规定网络的输入经过隐藏层之后，所得到的输出依然等于输入，看上去这个定义挺二的，比如使用一个恒等式就完成了，但当对自动编码进行一些约束之后，比如隐藏层节点数远小于输入层节点数(这样会迫使隐藏层学习关于输入信息的更加正交的表达，比如通过10个隐藏层节点的组合，表达出输入层100个节点的信息)，即可以得到对输入信号的正交基(信号主要方向)的抽象，如果你熟悉PCA，这一块应该很好理解，也可以看看我的另一篇[SVD、LSA(LSI)、PCA、PLSA、LDA的数学以及一个SVD的实践](https://luminarytian.github.io/2016/SVD-LSA(LSI)-PCA-PLSA-LDA%E7%9A%84%E6%95%B0%E5%AD%A6%E4%BB%A5%E5%8F%8A%E4%B8%80%E4%B8%AASVD%E5%AE%9E%E8%B7%B5/)。
+先说一下自动编码器(AutoEncoder)，具体的内容可以[参见](http://deeplearning.stanford.edu/wiki/index.php/%E8%87%AA%E7%BC%96%E7%A0%81%E7%AE%97%E6%B3%95%E4%B8%8E%E7%A8%80%E7%96%8F%E6%80%A7)。在上一节讲到的BP算法，其实是一个很老的算法了，在上世纪80年代就已经很成熟，但其并没有带来神经网络的成功，原因是通过BP计算的网络中每一层的参数不好解释，即不能知道网络中某一层所抽象出来的意义是什么。
+
+那么自动编码器可以做到这一点，简单的自动编码器规定网络的输入经过隐藏层之后，所得到的输出依然等于输入，看上去这个定义挺二的，比如使用一个恒等式就完成了，但当对自动编码进行一些约束之后，比如隐藏层节点数远小于输入层节点数(这样会迫使隐藏层学习关于输入信息的更加正交的表达，比如通过10个隐藏层节点的组合，表达出输入层100个节点的信息)，即可以得到对输入信号的正交基(信号主要方向)的抽象，如果你熟悉PCA，这一块应该很好理解，也可以看看我的另一篇[SVD、LSA(LSI)、PCA、PLSA、LDA的数学以及一个SVD的实践](https://luminarytian.github.io/2016/SVD-LSA(LSI)-PCA-PLSA-LDA%E7%9A%84%E6%95%B0%E5%AD%A6%E4%BB%A5%E5%8F%8A%E4%B8%80%E4%B8%AASVD%E5%AE%9E%E8%B7%B5/)。
 
 然后就是稀疏自编码器(SparseAutoEncoder),稀疏是指隐藏层中每个节点的神经元的激活值都趋近于0，为啥要加一个稀疏性呢，各位可以想象上一章提到的生物学中猫的视觉实验，在猫的眼前呈现的不同方向的不同物体，只激活了猫大脑中的部分神经元，即生物中神经网络的激活是有稀疏特性的。则稀疏自编码器的代价函数为：
 
 <img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large J(W, h) = ||Wh - y||_2^2 %2b \lambda ||h||_1">
 
-其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h">是隐藏层的激活值<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W">是该层中关于激活值的权重，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y">是输出层，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \lambda">是惩罚项的系数，其中右侧的惩罚项常常使用一阶范数(L1)或者二阶范数(L2)，本例中使用的是一阶范数。则求解上述公式得到的是**最小化网络对输入信号的抽象错误值与隐藏层神经元惩罚项的和**，其实是在学习对输入信号的最优表达。
+其中<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large h">是隐藏层的激活值，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large W">是该层中关于激活值的权重，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large y">是输出层，<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large \lambda">是惩罚项的系数，其中右侧的惩罚项常常使用一阶范数(L1)或者二阶范数(L2)，本例中使用的是一阶范数。则求解上述公式得到的是**最小化网络对输入信号的抽象错误值与隐藏层神经元惩罚项的和**，其实是在学习对输入信号的最优表达。
 
 最后可以看看[Andrew老师的一个例子](http://deeplearning.stanford.edu/wiki/index.php/%E5%8F%AF%E8%A7%86%E5%8C%96%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8%E8%AE%AD%E7%BB%83%E7%BB%93%E6%9E%9C)，其使用稀疏自编码器在图像数据上训练了100个隐藏神经元的结果：
 
@@ -378,9 +380,11 @@ e^{ (\theta_2-\theta_1)^T x }
 
 **2、递归神经网络：**
 
-递归神经网络的产生其实是基于一些实际问题，比如翻译、语音识别等，完成这些任务常常需要结合历史信息才能准确推断当前最合适的结果。即对神经网络的输入引入了时间维度，当然我们可以收集所有时间维度的输入信息并将其整合成一个大的神经网络进行训练，但这样需训练的参数会非常多，并且有些特定的场景下当前时间的状态是跟上一个时间的状态相关的，比如一首歌曲某个时间的声音是跟上一个时间状态声音的震动和当前时间状态发出的声音相叠加的。
+递归神经网络的产生其实是基于一些实际问题，比如翻译、语音识别等，完成这些任务常常需要结合历史信息才能准确推断当前最合适的结果。即对神经网络的输入引入了时间维度，当然我们可以收集所有时间维度的输入信息并将其整合成一个大的神经网络输入进行训练，但这样需训练的参数会非常多，并且有些特定的场景下当前时间的状态是跟上一个时间的状态相关的，比如一首歌曲某个时间的声音是跟上一个时间状态声音的震动和当前时间状态发出的声音相叠加的。
 
-**简单的说，递归神经网络使用上一个时间状态的隐层输出和当前时间状态的输入作为输入，得到当前状态隐层的输出。**RNN是目前DL能够大行其道的基石，现在主流DL的构建都需要用到RNN，一些在图像、声音上的DL也是用CNN做抽取，中间层全是RNN。这一点也可以从RNN的应用来证明，[RNN在机器翻译、同声传译、QA问答、图像实体识别、图像标注、视频标注等方面都有惊人的表现](https://github.com/kjw0612/awesome-rnn)，当然还有一些更厉害的比如[学写莎士比亚的散文、学写latex数学证明、学写C++代码等等](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)。总之一句话就是**非常NB，非常好玩**。
+**简单的说，递归神经网络使用上一个时间状态的隐层输出和当前时间状态的输入作为输入，得到当前状态隐层的输出**。
+
+RNN是目前DL能够大行其道的基石，现在主流DL的构建都需要用到RNN，一些在图像、声音上的DL也是用CNN做抽取，中间层全是RNN。这一点也可以从RNN的应用来证明，[RNN在机器翻译、同声传译、QA问答、图像实体识别、图像标注、视频标注等方面都有惊人的表现](https://github.com/kjw0612/awesome-rnn)，当然还有一些更厉害的比如[学写莎士比亚的散文、学写latex数学证明、学写C++代码等等](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)。总之一句话就是**非常NB，非常好玩**。
 
 ***2.1、一个简单的RNN模型：***
 
@@ -438,7 +442,7 @@ e^{ (\theta_2-\theta_1)^T x }
 
 ***2.3、LSTM：***
 
-为了解决梯度爆炸和梯度消失问题，提高网络和训练的有效性，大牛们提出了LSTM(long short term memory)，论文可以参考[S Hochreiter, J Schmidhuber的LSTM开山之作](http://www.mitpressjournals.org/doi/abs/10.1162/neco.1997.9.8.1735#.WJwiE2994dU)，LSTM在理论和应用中都达到了不错的效果，现阶段使用的RNN一般都是以LSTM为代表。
+为了解决梯度爆炸和梯度消失问题，提高网络和训练的有效性，大牛们提出了LSTM(long short term memory)，论文可以参考[S Hochreiter, J Schmidhuber的LSTM开山之作](http://www.mitpressjournals.org/doi/abs/10.1162/neco.1997.9.8.1735#.WJwiE2994dU)，LSTM在理论和应用中都达到了不错的效果，**现阶段使用的RNN一般都是以LSTM为代表**。
 
 如果用一句话来描述LSTM的优势的话，就是**使用接近常数1的<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large f">的导数来进行梯度的反向传播，从而解决了梯度爆炸和梯度消失问题，即神经网络能够记忆很久以前的训练数据作用于本次参数学习**。
 
@@ -484,7 +488,7 @@ _LSTM结构_
 
 ![神经网络语言模型](https://luminarytian.github.io/images/神经网络语言模型.png)
 
-如上图所示，其将词<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large w_t">在训练集中的前<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large n-1">个词的词向量<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large C(w_{t-n %2b 1}),...,C(w_{t-2}),C(w_{t-1})">首尾联立起来形成输入层，隐藏层使用tanh函数并训练一个普通的神经网络，输出层在隐藏层的基础上使用softmax作为激活函数得到最后的概率值，并且这里输出层和输入层还有直连边(代表其也有参数需要训练)，其中会将词向量初始化后也进行训练最后得到我们需要的低维词向量。
+如上图所示，其将词<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large w_t">在训练集中的前<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large n-1">个词的词向量<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large C(w_{t-n %2b 1}),...,C(w_{t-2}),C(w_{t-1})">首尾联立起来形成输入层，隐藏层使用tanh函数并训练一个普通的神经网络，输出层在隐藏层的基础上使用softmax作为激活函数得到最后的概率值，并且这里输出层和输入层还有直连边(代表其也有参数需要训练)，其中会将词向量初始化后也进行训练，最后得到我们需要的低维词向量。
 
 ---
 
@@ -496,7 +500,9 @@ _LSTM结构_
 
 Negative Sampling其实就是一个**负采样过程，通过语境<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large Content(w)">来看，语境中的词<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large w">就是一个正样本，其余的非<img src="http://chart.googleapis.com/chart?cht=tx&chl=\Large w">词就是负样本，算法的优化函数是最大化正样本的概率同时最小化负样本的概率。其中负采样的作用是提高了参数训练速度(因为训练集少了)，并且负采样使用的是加权负采样(词频越高的词越容易被算作负例，即热门的没有被当做正例证明其带有更多可以学习的信息)**。
 
-Word2Vec主要的推导还请参考[Hierarchical Softmax](http://blog.csdn.net/itplus/article/details/37969979)，[Negative Sampling](http://blog.csdn.net/itplus/article/details/37998797)的一系列文章，讲的非常详细了。再说回在文章引子中提到的一个Word2Vec实践，主要是参考了52nlp的[中英文维基百科语料上的word2vec实验](http://www.52nlp.cn/%E4%B8%AD%E8%8B%B1%E6%96%87%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91%E8%AF%AD%E6%96%99%E4%B8%8A%E7%9A%84word2vec%E5%AE%9E%E9%AA%8C)，训练集也是使用了最新的中文Wiki数据，根据52nlp的流程一路follow，最后根据用户在输入法中输入过的词的词向量，求出词向量距离最近的一些词推荐给用户，也取得了不错的效果(☺)，尤其是在处理一些基础推荐算法不能发现的隐含关系中。
+Word2Vec主要的推导还请参考[Hierarchical Softmax](http://blog.csdn.net/itplus/article/details/37969979)，[Negative Sampling](http://blog.csdn.net/itplus/article/details/37998797)的一系列文章，讲的非常详细了。
+
+再说回在文章引子中提到的一个Word2Vec实践，主要是参考了52nlp的[中英文维基百科语料上的word2vec实验](http://www.52nlp.cn/%E4%B8%AD%E8%8B%B1%E6%96%87%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91%E8%AF%AD%E6%96%99%E4%B8%8A%E7%9A%84word2vec%E5%AE%9E%E9%AA%8C)，训练集也是使用了最新的中文Wiki数据，根据52nlp的流程一路follow，最后根据用户在输入法中输入过的词的词向量，求出词向量距离最近的一些词推荐给用户，也取得了不错的效果(☺)，尤其是在处理一些基础推荐算法不能发现的隐含关系中。
 
 
 **参考**:
