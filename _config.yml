@@ -17,7 +17,7 @@ comments: true
 # Build settings
 permalink   : /:year/:title/
 markdown    : kramdown
-highlighter : rouge
+highlighter : pygments
 
 source: ./
 destination: ./_site
